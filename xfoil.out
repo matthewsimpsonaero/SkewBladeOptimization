@@ -1,0 +1,89 @@
+
+ ===================================================
+  XFOIL Version 6.99
+  Copyright (C) 2000   Mark Drela, Harold Youngren
+
+  This software comes with ABSOLUTELY NO WARRANTY,
+    subject to the GNU General Public License.
+
+  Caveat computor
+ ===================================================
+
+ File  xfoil.def  not found
+
+   QUIT    Exit program
+
+  .OPER    Direct operating point(s)
+  .MDES    Complex mapping design routine
+  .QDES    Surface speed design routine
+  .GDES    Geometry design routine
+
+   SAVE f  Write airfoil to labeled coordinate file
+   PSAV f  Write airfoil to plain coordinate file
+   ISAV f  Write airfoil to ISES coordinate file
+   MSAV f  Write airfoil to MSES coordinate file
+   REVE    Reverse written-airfoil node ordering
+
+   LOAD f  Read buffer airfoil from coordinate file
+   NACA i  Set NACA 4,5-digit airfoil and buffer airfoil
+   INTE    Set buffer airfoil by interpolating two airfoils
+   NORM    Buffer airfoil normalization toggle
+   XYCM rr Change CM reference location, currently  0.25000 0.00000
+
+   BEND    Display structural properties of current airfoil
+
+   PCOP    Set current-airfoil panel nodes directly from buffer airfoil points
+   PANE    Set current-airfoil panel nodes ( 160 ) based on curvature
+  .PPAR    Show/change paneling
+
+  .PLOP    Plotting options
+
+   WDEF f  Write  current-settings file
+   RDEF f  Reread current-settings file
+   NAME s  Specify new airfoil name
+   NINC    Increment name version number
+
+   Z       Zoom    | (available in all menus)
+   U       Unzoom  | 
+
+ XFOIL   c>  
+ File OPEN error.  Nonexistent file:  2411  
+ *** LOAD NOT COMPLETED ***
+
+ XFOIL   c>  
+ ***  No airfoil available  ***
+
+ XFOIL   c>   ITER command not recognized.  Type a "?" for list
+
+ XFOIL   c>   300  command not recognized.  Type a "?" for list
+
+ XFOIL   c>  
+ XFOIL   c>  
+ XFOIL   c>  
+ XFOIL   c>  
+ ***  No airfoil available  ***
+
+ XFOIL   c>   RE   command not recognized.  Type a "?" for list
+
+ XFOIL   c>   MACH command not recognized.  Type a "?" for list
+
+ XFOIL   c>   VISC command not recognized.  Type a "?" for list
+
+ XFOIL   c>   PACC command not recognized.  Type a "?" for list
+
+ XFOIL   c>  
+ XFOIL   c>  
+ XFOIL   c>   ALFA command not recognized.  Type a "?" for list
+
+ XFOIL   c>   DUMP command not recognized.  Type a "?" for list
+
+ XFOIL   c>   CPWR command not recognized.  Type a "?" for list
+
+ XFOIL   c>   PWRT command not recognized.  Type a "?" for list
+
+ XFOIL   c>   XFOI command not recognized.  Type a "?" for list
+
+ XFOIL   c>   PLIS command not recognized.  Type a "?" for list
+
+ XFOIL   c>  
+ XFOIL   c>  

@@ -1,0 +1,22 @@
+load 2411
+oper
+iter
+300
+
+
+
+oper
+re 68502.4
+mach 0.0502928
+visc
+pacc
+
+
+alfa 20
+dump xfoil_a20.000_dump.dat
+cpwr xfoil_a20.000_cpwr.dat
+pwrt
+xfoil_pwrt.dat
+plis
+
+quit
