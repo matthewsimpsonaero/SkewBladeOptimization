@@ -147,9 +147,6 @@ fid3 = fopen( 'Generational_Best.txt', 'wt' );
 fprintf(fid2, 'Element Number\t\tAirfoil\t\tCL\t\tAOA\n');
 fprintf(fid3, 'Element Number\t\tAirfoil\t\tAOA\n');
 
-% course Xfoil
-%[~,txt] = xlsread('NACA Candidates.xlsx');
-
 % starting_population = 3240/5; % 20 percent of the total subset
 % num_generations = 10;
 % num_parents = starting_population/2;
@@ -161,6 +158,8 @@ num_parents = starting_population/2;
 num_offspring = starting_population/2;
 
 
+course_xfoil = 25; % number of points
+points_course = linspace(0,20,course_xfoil);
 for element_num = 1:n
 
     Element_Reynolds = Average_Reynolds_Number(element_num);
@@ -170,8 +169,6 @@ for element_num = 1:n
     for gen = 1:num_generations
         for i = 1:length(Population)
             NACA_Number = Population{i};
-            course_xfoil = 25; % number of points
-            points_course = linspace(0,20,course_xfoil);
             try
                 fprintf('G%d:(%d/%d)Running NACA%s\n',gen,i,length(Population),NACA_Number)
                 [Polar] = Airfoil_Runner(NACA_Number,Element_Reynolds,Element_Mach,points_course);
@@ -193,13 +190,9 @@ for element_num = 1:n
             clear Lift
         end
     end
-
-    fine_xfoil = 50;
-    points_fine = linspace(0,20,fine_xfoil);
-    [Polar] = Airfoil_Runner(Population{indexes(1)},Element_Reynolds,Element_Mach,points_fine);
-    [Maxlift,idx] = max(Polar.CL);
-    bestAOA = Polar.Alpha(idx);
     
+    % run a fine Xfoil Analysis to get a higher fidelity AOA value
+    [Maxlift,bestAOA] = RunFineXfoil(Population{indexes(1)},Element_Reynolds,Element_Mach);
     
     fprintf('Best Airfoil: %s\n',Population{indexes(1)})
     fprintf(fid2, '%d\t\tNACA%s\t\t%.3f\t\t%.3f\t\t%d\n',element_num,Population{indexes(1)},Maxlift,bestAOA,Element_Reynolds);
