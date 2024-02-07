@@ -42,13 +42,17 @@ function [Polar] = Airfoil_Runner(NACA_Number,test_re,test_mach,points)
             Polar.CD      = data(:,3);
             xf.Polars = Polar;
         catch
-        xf.kill % kills the program if it does not work
+  
 
         end
         delete(char(xf.PolarFiles))
         delete(char(xf.ActionsFile))
         delete(char(xf.AirfoilFile))
-
+    catch
+        xf.kill
+        delete(char(xf.PolarFiles))
+        delete(char(xf.ActionsFile))
+        delete(char(xf.AirfoilFile))
 
 end
 

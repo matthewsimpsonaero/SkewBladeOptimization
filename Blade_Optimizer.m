@@ -2,6 +2,9 @@
 % Turbine Blade Optimizer in Skew
 % 1-27-2024
 clc;clear;close all
+addpath(genpath('/Initalization Functions'))
+addpath(genpath('/Genetic Algorithm Functions'))
+generate_plots = true;
 
 %% Input parameters
 
@@ -10,121 +13,53 @@ Blade_length = 0.15; %m
 skew_angle = 30; %deg
 blade_number = 3;
 TSR = (4*pi/blade_number)*1.25;  %https://users.wpi.edu/~cfurlong/me3320/DProject/Ragheb_OptTipSpeedRatio2014.pdf
-n = 10; %number of blade element segments
+n = 15; %number of blade element segments
 hub_radius = 0.0127; %meters
 
 %% Flow Paramters
 
 air_temp = 20; %celcius
 atmos_pressure = 101325; %Pa
-R = 8.314459; %j/mol*K
-molar_mass_air = 28.9628; %g/mol
 dynamic_viscosity_air = 1.8205e-5; % kg/m*s
 gamma_air = 1.4;
+R = 8.314459; %j/mol*K
+molar_mass_air = 28.9628; %g/mol
 
-Density_air = atmos_pressure/((R*1000/molar_mass_air)*(air_temp+273.15));
+Density_air = ComputeDensityAir(air_temp,atmos_pressure,R,molar_mass_air);
 
 %% Determination of velocity and direction
 
-Blade_element_index = 1:n;
-offset = 0.005; % to allow for non inf chord calculation
-Element_location = linspace(hub_radius+offset,Blade_length+hub_radius,n);
+Element_location = linspace(Blade_length/n,Blade_length,n);
 omega = (TSR*V_inf)/ (Blade_length+hub_radius);
 
 for i = 1:n
-for theta = 1:360
-    Position(i,theta) = Element_location(i)*sind(skew_angle)*cosd(theta);
-    Skew_Velocity(i,theta) = -omega*Element_location(i)*sind(skew_angle)*sind(theta);
-end 
+    for theta = 1:360
+        Position(i,theta) = (Element_location(i)+hub_radius)*sind(skew_angle)*cosd(theta);
+        Skew_Velocity(i,theta) = -omega*(Element_location(i)+hub_radius)*sind(skew_angle)*sind(theta);
+    end
 end
-
-fig = figure();
-fig.Position = [100 100 740 600];
-for i = 1:n
-plot(1:360,Position(i,:))
-hold on
-end
-grid on 
-grid(gca,'minor')
-xlabel('° (deg)')
-ylabel('Axial Position (m)')
-title('Axial Position vs. Rotation Angle for Skewed Turbine')
-
-fig = figure();
-fig.Position = [100 100 740 600];
-for i = 1:n
-plot(1:360,Skew_Velocity(i,:))
-hold on
-end
-grid on 
-grid(gca,'minor')
-xlabel('° (deg)')
-ylabel('Skew Velocity (m/s)')
-title('Skew Velocity vs. Rotation Angle for Skewed Turbine')
 
 V_total_static = Skew_Velocity+(V_inf*cosd(skew_angle));
 
-fig = figure();
-fig.Position = [100 100 740 600];
-for i = 1:n
-plot(1:360,V_total_static(i,:))
-hold on
+if generate_plots
+    GeneratePositionPlot(Position,n)
+    GenerateSkewVelocityPlot(Skew_Velocity,n)
+    GenerateTotalAxialVelocityPlot(V_total_static,n)
 end
-grid on 
-grid(gca,'minor')
-xlabel('° (deg)')
-ylabel('Total Axial Velocity (m/s)')
-title('Total Axial Velocity vs. Rotation Angle for Skewed Turbine')
 
 theta = 1:360;
 for i = 1:n
-V_perpindicular(i,1:360) = V_inf*cosd(skew_angle)-omega*Element_location(i)*sind(skew_angle)*sind(theta);
-V_parallel(i,1:360) = V_inf*sind(skew_angle)*sind(theta) + omega*Element_location(i);
-Velocity_Direction(i,1:360) = atan2d( V_perpindicular(i,1:360), V_parallel(i,1:360));
+    V_perpindicular(i,1:360) = V_inf*cosd(skew_angle)-omega*(Element_location(i)+hub_radius)*sind(skew_angle)*sind(theta);
+    V_parallel(i,1:360) = V_inf*sind(skew_angle)*sind(theta) + omega*(Element_location(i)+hub_radius);
+    Velocity_Direction(i,1:360) = atan2d( V_perpindicular(i,1:360), V_parallel(i,1:360));
 end
 
 Average_Velocity_Direction = mean(Velocity_Direction');
 
-%% Compute optimal chord with wake rotation Guessing CL
-GuessCL = 1.5;
-
-roverR = (linspace(1/n,1,n));
-LamdaR = TSR*roverR;
-for i = 1:n
-coverR_wake(i) = ((8*pi*roverR(i))/(blade_number*GuessCL))*(1-cosd(Average_Velocity_Direction(i))); %Wiley equation 3-106
-coverR_no_wake(i) = (8*pi*Element_location(i)*sind(Average_Velocity_Direction(i)))/(3*blade_number*GuessCL*LamdaR(i));% Wiley 3-79
-end
-
-fig = figure();
-fig.Position = [100 100 740 600];
-plot(roverR,coverR_no_wake)
-hold on
-plot(roverR,coverR_wake)
-legend('No Wake','Wake')
-xlabel('r/R')
-ylabel('c/R')
-grid on
-
-%% compute solidarity
-R_values = roverR*(Blade_length+hub_radius);
-integral_C = trapz(R_values, coverR_wake*(Blade_length+hub_radius));
-sigma = (integral_C*blade_number) / (pi * (Blade_length+hub_radius)^2); %Wiley 3.107
-
-%% Compute axial and tangential induction factors
-
-for i = 1:n
-a(i) = 1/((1+(4*sind(Average_Velocity_Direction(i)^2))) /(sigma*GuessCL*cosd(Average_Velocity_Direction(i))));% Wiley 3.88
-aprime(i) = 1/(((4*cosd(Average_Velocity_Direction(i)))/(sigma*GuessCL))-1); % Wiley 3.89
-end
-
-%% Compute Velocity using the induction factors
-
 fig = figure();
 fig.Position = [100 100 740 600];
 for i = 1:n
-V_parallel_corrected(i,:) = (V_parallel(i,:).*(1+aprime(i)));
-V_perpindicular_corrected(i,:) = (V_perpindicular(i,:).*(1-a(i)));
-plot(1:360,sqrt(V_parallel_corrected(i,:).^2+V_perpindicular_corrected(i,:) .^2))
+plot(1:360,sqrt(V_parallel(i,:).^2+V_perpindicular(i,:) .^2))
 hold on
 end
 grid on 
@@ -145,23 +80,81 @@ xlabel('° (deg)')
 ylabel('Velocity Direction (°)')
 title('Velocity Direction vs. Rotation Angle for Skewed Turbine')
 
+% Compute optimal chord with wake rotation Guessing CL
+GuessCL = 1.5;
+roverR = (linspace(1/n,1,n));
+LamdaR = TSR*roverR;
+
 for i = 1:n
-Direction_range(i) = max(Velocity_Direction(i,:))-min(Velocity_Direction(i,:));
+    coverR_wake(i) = ((8*pi*roverR(i))/(blade_number*GuessCL))*(1-cosd(Average_Velocity_Direction(i))); %Wiley equation 3-106
+    coverR_no_wake(i) = (8*pi*(Element_location(i)+hub_radius)*sind(Average_Velocity_Direction(i)))/(3*blade_number*GuessCL*LamdaR(i));% Wiley 3-79
+end
+
+if generate_plots
+GenerateChordPlot(roverR,coverR_wake)
+end
+% compute solidarity
+R_values = Element_location+hub_radius;
+R_total = Blade_length+hub_radius;
+integral_C = trapz(R_values, coverR_wake*(R_total));
+sigma = ((integral_C*blade_number) +(pi*hub_radius^2)) / (pi * R_total^2); %Wiley 3.107
+
+% Compute axial and tangential induction factors
+
+for i = 1:n
+aprime(i) = 1/(((4*cosd(Average_Velocity_Direction(i)))/(sigma*GuessCL))-1); % Wiley 3.89
+a(i) = -((aprime(i)/((sigma*GuessCL*cosd(Average_Velocity_Direction(i)))/(4*LamdaR(i)*sind(Average_Velocity_Direction(i)))))-1); %wiley 3-83
+end
+
+% Compute Velocity using the induction factors
+
+for i = 1:n
+V_parallel_corrected(i,:) = (V_parallel(i,:).*(1+aprime(i)));
+V_perpindicular_corrected(i,:) = (V_perpindicular(i,:).*(1-a(i)));
+Velocity_Direction_corrected(i,1:360) = atan2d(V_perpindicular_corrected(i,:), V_parallel_corrected(i,:));
+end
+
+fig = figure();
+fig.Position = [100 100 740 600];
+for i = 1:n
+plot(1:360,sqrt(V_parallel_corrected(i,:).^2+V_perpindicular_corrected(i,:) .^2))
+hold on
+end
+grid on 
+grid(gca,'minor')
+xlabel('° (deg)')
+ylabel('Seen Velocity (m/s)')
+title('Seen Velocity vs. Rotation Angle for Skewed Turbine')
+
+fig = figure();
+fig.Position = [100 100 740 600];
+for i = 1:n
+plot(1:360,Velocity_Direction_corrected(i,:))
+hold on
+end
+grid on 
+grid(gca,'minor')
+xlabel('° (deg)')
+ylabel('Velocity Direction (°)')
+title('Velocity Direction vs. Rotation Angle for Skewed Turbine')
+
+for i = 1:n
+Direction_range(i) = max(Velocity_Direction_corrected(i,:))-min(Velocity_Direction_corrected(i,:));
 end
 
 
 for i = 1:n
-Average_Velocity(i) = mean(sqrt(V_parallel(i,:).^2+V_perpindicular(i,:).^2));
+Average_Velocity(i) = mean(sqrt(V_parallel_corrected(i,:).^2+V_perpindicular_corrected(i,:).^2));
 end
 
 for i = 1:n
-Average_Mach(i) = mean(sqrt(V_parallel(i,:).^2+V_perpindicular(i,:).^2) ./ sqrt(gamma_air*(R*1000/molar_mass_air)*(air_temp+273.15)));
+Average_Mach(i) = mean(sqrt(V_parallel_corrected(i,:).^2+V_perpindicular_corrected(i,:).^2) ./ sqrt(gamma_air*(R*1000/molar_mass_air)*(air_temp+273.15)));
 end
 
 %% Calculation of reynolds number
 
 for i = 1:n
-Reynolds_Number(i,1:360) = (Density_air*sqrt(V_parallel(i,:).^2+V_perpindicular(i,:).^2)*Chord_inital_guess)/dynamic_viscosity_air;
+Reynolds_Number(i,1:360) = (Density_air*sqrt(V_parallel_corrected(i,:).^2+V_perpindicular_corrected(i,:).^2)*(coverR_wake(i)*Blade_length))/dynamic_viscosity_air;
 end
 
 fig = figure();

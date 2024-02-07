@@ -1,2 +1,1 @@
-Element Number		Airfoil		CL		AOA
-1		NACA7303		1.357		2.042844e+04
+Element Number		Airfoil		AOA
