@@ -2,8 +2,8 @@
 % Turbine Blade Optimizer in Skew
 % 1-27-2024
 clc;clear;close all
-addpath(genpath('/Initalization Functions'))
-addpath(genpath('/Genetic Algorithm Functions'))
+addpath(genpath('./Initalization Functions'))
+addpath(genpath('./Genetic Algorithm Functions'))
 generate_plots = true;
 
 %% Input parameters
@@ -179,16 +179,10 @@ fid3 = fopen( 'Generational_Best.txt', 'wt' );
 fprintf(fid2, 'Element Number\t\tAirfoil\t\tCL\t\tAOA\n');
 fprintf(fid3, 'Element Number\t\tAirfoil\t\tAOA\n');
 
-% starting_population = 3240/5; % 20 percent of the total subset
-% num_generations = 10;
-% num_parents = starting_population/2;
-% num_offspring = starting_population/2;
-
-starting_population = 40; % 20 percent of the total subset
-num_generations = 2;
+starting_population = 3240/5; % 20 percent of the total subset
+num_generations = 10;
 num_parents = starting_population/2;
 num_offspring = starting_population/2;
-
 
 course_xfoil = 25; % number of points
 points_course = linspace(0,20,course_xfoil);
@@ -203,6 +197,8 @@ for element_num = 1:n
             NACA_Number = Population{i};
             try
                 fprintf('G%d:(%d/%d)Running NACA%s\n',gen,i,length(Population),NACA_Number)
+
+                 %[Polar] = Airfoil_Runner(NACA_Number,1,Element_Mach,points_course);
                 [Polar] = Airfoil_Runner(NACA_Number,Element_Reynolds,Element_Mach,points_course);
                 Lift(i) = max(Polar.CL);
             catch
@@ -219,6 +215,7 @@ for element_num = 1:n
         fprintf(fid3, '%d\t\tNACA%s\t\t%.3f\t\t%d\n',element_num,Population{sorted_indexes(1)},sorted_values(1),Element_Reynolds);  
         if gen~=num_generations
             Population = generate_offspring(Parents,num_offspring);
+            Population = Population + [Parents{1:20}]
             clear Lift
         end
     end

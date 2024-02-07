@@ -1,5 +1,5 @@
 function [Polar] = Airfoil_Runner(NACA_Number,test_re,test_mach,points)
-    try
+try
         xf = XFOIL;
         xf.KeepFiles = false; % Set it to true to keep all intermediate files created (Airfoil, Polars, ...)
         xf.Visible = false;    % Set it to false to hide XFOIL plotting window
@@ -45,11 +45,23 @@ function [Polar] = Airfoil_Runner(NACA_Number,test_re,test_mach,points)
   
 
         end
-        delete(char(xf.PolarFiles))
-        delete(char(xf.ActionsFile))
+
+        [status, cmdout] = system('tasklist /FI "IMAGENAME eq xfoil.exe"');
+        pattern = 'xfoil.exe\s+(\d+)';
+        matches = regexp(cmdout, pattern, 'tokens');
+        pid = str2double(matches{1}{1});
+
+        % Now kill the process using its PID
+        if ~isempty(pid)
+            system(['taskkill /F /PID ' num2str(pid)]);
+            fprintf('Killed Xfoil Process\n')
+        end
+        delete(xf.ActionsFile)
         delete(char(xf.AirfoilFile))
-    catch
-        xf.kill
+        delete(char(xf.PolarFiles))
+
+        
+catch
         delete(char(xf.PolarFiles))
         delete(char(xf.ActionsFile))
         delete(char(xf.AirfoilFile))
