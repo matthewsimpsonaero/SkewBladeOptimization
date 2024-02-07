@@ -9,7 +9,7 @@ for i = 1:Population_Size
     else
         Camber_Position = 0;
     end
-    Thickness = randi([1 40]);
+    Thickness = randi([10 40]);
     if Thickness < 10
         Thickness = [num2str(0),num2str(Thickness)];
     end

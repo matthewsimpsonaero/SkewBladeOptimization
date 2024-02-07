@@ -180,9 +180,9 @@ fprintf(fid2, 'Element Number\t\tAirfoil\t\tCL\t\tAOA\n');
 fprintf(fid3, 'Element Number\t\tAirfoil\t\tAOA\n');
 
 starting_population = 3240/5; % 20 percent of the total subset
-num_generations = 10;
-num_parents = starting_population/2;
-num_offspring = starting_population/2;
+num_generations = 5;
+num_parents = starting_population/4;
+num_offspring = starting_population/4;
 
 course_xfoil = 25; % number of points
 points_course = linspace(0,20,course_xfoil);
@@ -215,7 +215,7 @@ for element_num = 1:n
         fprintf(fid3, '%d\t\tNACA%s\t\t%.3f\t\t%d\n',element_num,Population{sorted_indexes(1)},sorted_values(1),Element_Reynolds);  
         if gen~=num_generations
             Population = generate_offspring(Parents,num_offspring);
-            Population = Population + [Parents{1:20}]
+            Population = [Population , [Parents{1:20}]];
             clear Lift
         end
     end
