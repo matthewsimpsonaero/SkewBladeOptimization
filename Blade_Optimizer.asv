@@ -270,7 +270,6 @@ end
 
 
 %% Determine twist
-Qblade_pitch = [48.1,26.4,16.61,11.3,6.098,3.917,1.353,.178,-0.736];
 
 for jj = 1:8
 [alpha_ext, CL_ext, CD_ext] = viterna_extrapolation(AOA_curves{jj}, Lift_curves{jj}, Drag_curves{jj}); %perform vinerna expansion 
@@ -299,8 +298,6 @@ theta_p_deg = linspace(0,70,100); % for example from 0 to 180 degrees
 best_pitch(jj) = theta_p_range_deg(idx);
 
 
-Elemental_CP(jj) = plotObjectiveFunctionSingleThetaP(phi_vector_deg, lambda_r, a_prime, a(jj), alpha_data_deg, Cd_data, Cl_data, best_pitch(jj));
-QBlade_Elemental_CP(jj) = plotObjectiveFunctionSingleThetaP(phi_vector_deg, lambda_r, a_prime, a(jj), alpha_data_deg, Cd_data, Cl_data, Qblade_pitch(jj));
 
 end
 
@@ -348,13 +345,13 @@ function [theta_p_range_deg,objective_values] = plotObjectiveFunction(phi_vector
    % Plot the objective function values against the theta_p range
    figure;
    plot(theta_p_range_deg, objective_values, 'b-', 'LineWidth', 2);
-   xlabel('Pitch Angle');
+   xlabel('Pitch Angle \( \theta_p \) (Degrees)');
    ylabel('Objective Function Value');
-   title('Objective Function Variation with Pitch Angle');
+   title('Objective Function Variation with Pitch Angle \( \theta_p \)');
    grid on;
 end
 
-function Elemental_CP = plotObjectiveFunctionSingleThetaP(phi_vector_deg, lambda_r, a_prime, a, alpha_data_deg, Cd_data, Cl_data, theta_p_deg)
+function plotObjectiveFunctionSingleThetaP(phi_vector_deg, lambda_r, a_prime, a, alpha_data_deg, Cd_data, Cl_data, theta_p_deg)
     % Create phi interpolation function
     theta_deg_vec = 0:359; % Assuming phi_vector_deg is given for each degree
     phi_function_deg = @(theta_deg) interp1(theta_deg_vec, phi_vector_deg, theta_deg, 'spline');
