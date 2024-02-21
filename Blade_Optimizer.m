@@ -145,10 +145,10 @@ fid3 = fopen( 'Generational_Best.txt', 'wt' );
 fprintf(fid2, 'Element Number\t\tAirfoil\t\tintCLoverCD\t\tAOA\n');
 fprintf(fid3, 'Element Number\t\tAirfoil\t\tint(l/d)\t\tReynolds#\n');
 
-starting_population = 1200; % 50 percent of the total subset
-num_generations = 2;
-num_parents = starting_population/10;
-num_offspring = starting_population/10;
+starting_population = 1215; % 50 percent of the total subset
+num_generations = 5;
+num_parents = 120;
+num_offspring = 120;
 
 course_xfoil = 40; % number of points
 points_course = linspace(-20,20,course_xfoil);
@@ -181,7 +181,7 @@ for element_num = 1:n
         fprintf(fid3, '%d\t\tNACA%s\t\t%.3f\t\t%d\n',element_num,Population{sorted_indexes(1)},sorted_values(1),Element_Reynolds);  
         if gen~=num_generations
             Population = generate_offspring(Parents,num_offspring);
-            Population = [Population , [Parents{1:20}]];
+            Population = [Population , [Parents{1:20}]]; %**************
             clear LiftoverDragint
         end
     end
