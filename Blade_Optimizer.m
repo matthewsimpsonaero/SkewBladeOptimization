@@ -4,7 +4,7 @@
 clc;clear;close all
 addpath(genpath('./Initalization Functions'))
 addpath(genpath('./Genetic Algorithm Functions'))
-generate_plots = false;
+generate_plots = true;
 
 %% Input parameters
 
@@ -49,7 +49,7 @@ end
 
 theta = 1:360;
 for i = 1:n
-    V_perpindicular(i,1:360) = V_inf*cosd(skew_angle)-omega*(Element_location(i)+hub_radius)*sind(skew_angle)*sind(theta);
+    V_perpindicular(i,1:360) = V_inf*(cosd(theta)-sind(theta)*cosd(skew_angle));
     V_parallel(i,1:360) = V_inf*sind(skew_angle)*sind(theta) + omega*(Element_location(i)+hub_radius);
     Velocity_Direction(i,1:360) = atan2d( V_perpindicular(i,1:360), V_parallel(i,1:360));
 end
