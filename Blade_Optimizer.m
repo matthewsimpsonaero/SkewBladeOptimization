@@ -1,7 +1,7 @@
 % Matthew Simpson
 % Turbine Blade Optimizer in Skew
 % 1-27-2024
-clc;clear;close all
+clc;clear
 addpath(genpath('./Initalization Functions'))
 addpath(genpath('./Genetic Algorithm Functions'))
 generate_plots = true;
@@ -29,10 +29,10 @@ Density_air = ComputeDensityAir(air_temp,atmos_pressure,R,molar_mass_air);
 
 %% Determination of velocity and direction
 
-Element_location = linspace(Blade_length/n,Blade_length,n);
+Element_location = linspace(0,Blade_length,n+1);
 omega = (TSR*V_inf)/ (Blade_length+hub_radius);
 
-for i = 1:n
+for i = 1:n+1
     for theta = 1:360
         Position(i,theta) = (Element_location(i)+hub_radius)*sind(skew_angle)*cosd(theta);
         Skew_Velocity(i,theta) = -omega*(Element_location(i)+hub_radius)*sind(skew_angle)*sind(theta);
@@ -48,8 +48,8 @@ if generate_plots
 end
 
 theta = 1:360;
-for i = 1:n
-    V_perpindicular(i,1:360) = V_inf*(cosd(theta)-sind(theta)*cosd(skew_angle));
+for i = 1:n+1
+    V_perpindicular(i,1:360) = V_inf*cosd(skew_angle)-omega*(Element_location(i)+hub_radius)*sind(skew_angle)*sind(theta);
     V_parallel(i,1:360) = V_inf*sind(skew_angle)*sind(theta) + omega*(Element_location(i)+hub_radius);
     Velocity_Direction(i,1:360) = atan2d( V_perpindicular(i,1:360), V_parallel(i,1:360));
 end
@@ -59,7 +59,7 @@ Average_Velocity_Direction = mean(Velocity_Direction');
 if generate_plots
 fig = figure();
 fig.Position = [100 100 740 600];
-for i = 1:n
+for i = 1:n+1
 plot(1:360,sqrt(V_parallel(i,:).^2+V_perpindicular(i,:) .^2))
 hold on
 end
@@ -71,7 +71,7 @@ title('Seen Velocity vs. Rotation Angle for Skewed Turbine')
 
 fig = figure();
 fig.Position = [100 100 740 600];
-for i = 1:n
+for i = 1:n+1
 plot(1:360,Velocity_Direction(i,:))
 hold on
 end
@@ -82,90 +82,49 @@ ylabel('Velocity Direction (°)')
 title('Velocity Direction vs. Rotation Angle for Skewed Turbine')
 end
 
+%%
+
 % Compute optimal chord with wake rotation Guessing CL
 GuessCL = 1.5;
-roverR = (linspace(1/n,1,n));
-LamdaR = TSR*roverR;
+roverR = (linspace(hub_radius/(Blade_length+hub_radius),1,n+1));
 
-for i = 1:n
+m = TSR/((Blade_length+hub_radius));
+beginning_val = hub_radius*m;
+LamdaR = beginning_val + m*(roverR*Blade_length);
+
+for i = 1:n+1
     coverR_wake(i) = ((8*pi*roverR(i))/(blade_number*GuessCL))*(1-cosd(Average_Velocity_Direction(i))); %Wiley equation 3-106
-    coverR_no_wake(i) = (8*pi*(Element_location(i)+hub_radius)*sind(Average_Velocity_Direction(i)))/(3*blade_number*GuessCL*LamdaR(i));% Wiley 3-79
+    coverR_no_wake(i) = ((8*pi*roverR(i))*sind(Average_Velocity_Direction(i)))/(3*blade_number*GuessCL*LamdaR(i));% Wiley 3-79
 end
 
 if generate_plots
-GenerateChordPlot(roverR,coverR_wake)
-end
-% compute solidarity
-R_values = Element_location+hub_radius;
-R_total = Blade_length+hub_radius;
-integral_C = trapz(R_values, coverR_wake*(R_total));
-sigma = ((integral_C*blade_number) +(pi*hub_radius^2)) / (pi * R_total^2); %Wiley 3.107
-
-% Compute axial and tangential induction factors
-
-for i = 1:n
-aprime(i) = 1/(((4*cosd(Average_Velocity_Direction(i)))/(sigma*GuessCL))-1); % Wiley 3.89
-a(i) = -((aprime(i)/((sigma*GuessCL*cosd(Average_Velocity_Direction(i)))/(4*LamdaR(i)*sind(Average_Velocity_Direction(i)))))-1); %wiley 3-83
+GenerateChordPlot(roverR,coverR_wake,coverR_no_wake)
 end
 
-% Compute Velocity using the induction factors
-
-for i = 1:n
-V_parallel_corrected(i,:) = (V_parallel(i,:).*(1+aprime(i)));
-V_perpindicular_corrected(i,:) = (V_perpindicular(i,:).*(1-a(i)));
-Velocity_Direction_corrected(i,1:360) = atan2d(V_perpindicular_corrected(i,:), V_parallel_corrected(i,:));
-end
-
-if generate_plots
-fig = figure();
-fig.Position = [100 100 740 600];
-for i = 1:n
-plot(1:360,sqrt(V_parallel_corrected(i,:).^2+V_perpindicular_corrected(i,:) .^2))
-hold on
-end
-grid on 
-grid(gca,'minor')
-xlabel('° (deg)')
-ylabel('Seen Velocity (m/s)')
-title('Seen Velocity vs. Rotation Angle for Skewed Turbine')
-
-fig = figure();
-fig.Position = [100 100 740 600];
-for i = 1:n
-plot(1:360,Velocity_Direction_corrected(i,:))
-hold on
-end
-grid on 
-grid(gca,'minor')
-xlabel('° (deg)')
-ylabel('Velocity Direction (°)')
-title('Velocity Direction vs. Rotation Angle for Skewed Turbine')
-end
-
-for i = 1:n
-Direction_range(i) = max(Velocity_Direction_corrected(i,:))-min(Velocity_Direction_corrected(i,:));
-Direction_min(i) = min(Velocity_Direction_corrected(i,:));
+for i = 1:n+1
+Direction_range(i) = max(Velocity_Direction(i,:))-min(Velocity_Direction(i,:));
+Direction_min(i) = min(Velocity_Direction(i,:));
 end
 
 
-for i = 1:n
-Average_Velocity(i) = mean(sqrt(V_parallel_corrected(i,:).^2+V_perpindicular_corrected(i,:).^2));
+for i = 1:n+1
+Average_Velocity(i) = mean(sqrt(V_parallel(i,:).^2+V_perpindicular(i,:).^2));
 end
 
-for i = 1:n
-Average_Mach(i) = mean(sqrt(V_parallel_corrected(i,:).^2+V_perpindicular_corrected(i,:).^2) ./ sqrt(gamma_air*(R*1000/molar_mass_air)*(air_temp+273.15)));
+for i = 1:n+1
+Average_Mach(i) = mean(sqrt(V_parallel(i,:).^2+V_perpindicular(i,:).^2) ./ sqrt(gamma_air*(R*1000/molar_mass_air)*(air_temp+273.15)));
 end
 
 %% Calculation of reynolds number
 
-for i = 1:n
-Reynolds_Number(i,1:360) = (Density_air*sqrt(V_parallel_corrected(i,:).^2+V_perpindicular_corrected(i,:).^2)*(coverR_wake(i)*Blade_length))/dynamic_viscosity_air;
+for i = 1:n+1
+Reynolds_Number(i,1:360) = (Density_air*sqrt(V_parallel(i,:).^2+V_perpindicular(i,:).^2)*(coverR_wake(i)*Blade_length))/dynamic_viscosity_air;
 end
 
 if generate_plots
 fig = figure();
 fig.Position = [100 100 740 600];
-for i = 1:n
+for i = 1:n+1
 plot(1:360,Reynolds_Number(i,:))
 hold on
 end
@@ -181,58 +140,58 @@ Average_Reynolds_Number = mean(Reynolds_Number');
 
 %% Xfoil Selection Using a Genetic Algorithm
 
-% fid2 = fopen( 'results.txt', 'wt' );
-% fid3 = fopen( 'Generational_Best.txt', 'wt' );
-% fprintf(fid2, 'Element Number\t\tAirfoil\t\tintCLoverCD\t\tAOA\n');
-% fprintf(fid3, 'Element Number\t\tAirfoil\t\tint(l/d)\t\tReynolds#\n');
-% 
-% starting_population = 1200; % 50 percent of the total subset
-% num_generations = 2;
-% num_parents = starting_population/10;
-% num_offspring = starting_population/10;
-% 
-% course_xfoil = 40; % number of points
-% points_course = linspace(-20,20,course_xfoil);
-% for element_num = 1:n
-% 
-%     Element_Reynolds = Average_Reynolds_Number(element_num);
-%     Element_Mach = Average_Mach(element_num);
-% 
-%     Population = generate_inital_population(starting_population);
-%     for gen = 1:num_generations
-%         for i = 1:length(Population)
-%             NACA_Number = Population{i};
-%             try
-%                 fprintf('G%d:(%d/%d)Running NACA%s\n',gen,i,length(Population),NACA_Number)
-% 
-%                  %[Polar] = Airfoil_Runner(NACA_Number,1,Element_Mach,points_course);
-%                 [Polar] = Airfoil_Runner(NACA_Number,Element_Reynolds,Element_Mach,points_course);
-%                 LiftoverDragint(i) = trapz(Polar.Alpha,(Polar.CL./Polar.CD));
-%             catch
-%                 LiftoverDragint(i) = 0;
-%             end
-%         end
-%         [sorted_values, sorted_indexes] = sort(LiftoverDragint, 'descend');
-%         top_values = sorted_values(1:num_parents);
-%         indexes = sorted_indexes(1:num_parents);
-%         Parents = {};
-%         for i = 1:num_parents
-%             Parents{i} = Population(indexes(i));
-%         end
-%         fprintf(fid3, '%d\t\tNACA%s\t\t%.3f\t\t%d\n',element_num,Population{sorted_indexes(1)},sorted_values(1),Element_Reynolds);  
-%         if gen~=num_generations
-%             Population = generate_offspring(Parents,num_offspring);
-%             Population = [Population , [Parents{1:20}]];
-%             clear LiftoverDragint
-%         end
-%     end
-%     
-%     % run a fine Xfoil Analysis to get a higher fidelity AOA value
-%     [Maxlift,bestAOA,Lift_curve,Drag_curve,AOA_curve,maxLoverDint] = RunFineXfoil(Population{indexes(1)},Element_Reynolds,Element_Mach);
-%     
-%     fprintf('Best Airfoil: %s\n',Population{indexes(1)})
-%     fprintf(fid2, '%d\t\tNACA%s\t\t%.3f\t\t%d\n',element_num,Population{indexes(1)},maxLoverDint,Element_Reynolds);
-% end
+fid2 = fopen( 'results.txt', 'wt' );
+fid3 = fopen( 'Generational_Best.txt', 'wt' );
+fprintf(fid2, 'Element Number\t\tAirfoil\t\tintCLoverCD\t\tAOA\n');
+fprintf(fid3, 'Element Number\t\tAirfoil\t\tint(l/d)\t\tReynolds#\n');
+
+starting_population = 1200; % 50 percent of the total subset
+num_generations = 2;
+num_parents = starting_population/10;
+num_offspring = starting_population/10;
+
+course_xfoil = 40; % number of points
+points_course = linspace(-20,20,course_xfoil);
+for element_num = 1:n
+
+    Element_Reynolds = Average_Reynolds_Number(element_num);
+    Element_Mach = Average_Mach(element_num);
+
+    Population = generate_inital_population(starting_population);
+    for gen = 1:num_generations
+        for i = 1:length(Population)
+            NACA_Number = Population{i};
+            try
+                fprintf('G%d:(%d/%d)Running NACA%s\n',gen,i,length(Population),NACA_Number)
+
+                 %[Polar] = Airfoil_Runner(NACA_Number,1,Element_Mach,points_course);
+                [Polar] = Airfoil_Runner(NACA_Number,Element_Reynolds,Element_Mach,points_course);
+                LiftoverDragint(i) = trapz(Polar.Alpha,(Polar.CL./Polar.CD));
+            catch
+                LiftoverDragint(i) = 0;
+            end
+        end
+        [sorted_values, sorted_indexes] = sort(LiftoverDragint, 'descend');
+        top_values = sorted_values(1:num_parents);
+        indexes = sorted_indexes(1:num_parents);
+        Parents = {};
+        for i = 1:num_parents
+            Parents{i} = Population(indexes(i));
+        end
+        fprintf(fid3, '%d\t\tNACA%s\t\t%.3f\t\t%d\n',element_num,Population{sorted_indexes(1)},sorted_values(1),Element_Reynolds);  
+        if gen~=num_generations
+            Population = generate_offspring(Parents,num_offspring);
+            Population = [Population , [Parents{1:20}]];
+            clear LiftoverDragint
+        end
+    end
+    
+    % run a fine Xfoil Analysis to get a higher fidelity AOA value
+    [Maxlift,bestAOA,Lift_curve,Drag_curve,AOA_curve,maxLoverDint] = RunFineXfoil(Population{indexes(1)},Element_Reynolds,Element_Mach);
+    
+    fprintf('Best Airfoil: %s\n',Population{indexes(1)})
+    fprintf(fid2, '%d\t\tNACA%s\t\t%.3f\t\t%d\n',element_num,Population{indexes(1)},maxLoverDint,Element_Reynolds);
+end
 
 
 %% Load best airfoils
@@ -270,7 +229,6 @@ end
 
 
 %% Determine twist
-Qblade_pitch = [48.1,26.4,16.61,11.3,6.098,3.917,1.353,.178,-0.736];
 
 for jj = 1:8
 [alpha_ext, CL_ext, CD_ext] = viterna_extrapolation(AOA_curves{jj}, Lift_curves{jj}, Drag_curves{jj}); %perform vinerna expansion 

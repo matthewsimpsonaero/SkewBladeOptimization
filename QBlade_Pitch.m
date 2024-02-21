@@ -2,6 +2,8 @@ addpath(genpath('./QBlade Pitch Files 2'))
 Reynolds_1 = readmatrix('Reynolds_2.txt');
 Average_Reynolds_Number = mean(Reynolds_1(:,2));
 
+plot(Reynolds_1(:,1),Reynolds_1(:,2))
+
 %% Load best airfoils
 
 fileID = fopen('Emelia Results/maximization/results.txt', 'r');
