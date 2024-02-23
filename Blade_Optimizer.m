@@ -152,7 +152,7 @@ num_offspring = 120;
 
 course_xfoil = 40; % number of points
 points_course = linspace(-20,20,course_xfoil);
-for element_num = 1:n
+for element_num = 11:n+1
 
     Element_Reynolds = Average_Reynolds_Number(element_num);
     Element_Mach = Average_Mach(element_num);
