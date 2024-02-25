@@ -3,7 +3,7 @@ try
         xf = XFOIL;
         xf.KeepFiles = false; % Set it to true to keep all intermediate files created (Airfoil, Polars, ...)
         xf.Visible = false;    % Set it to false to hide XFOIL plotting window
-        xf.Airfoil =  Airfoil.createNACA4(NACA_Number,150);
+        xf.Airfoil =   Airfoil(NACA_Number);
         %Add five filtering steps to smooth the airfoil coordinates and help convergence
         xf.addFiltering(5);
         %Switch to OPER mode, and set Reynolds and mach

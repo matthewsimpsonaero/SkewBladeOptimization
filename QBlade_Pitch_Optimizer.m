@@ -1,36 +1,36 @@
 clc;clear
 
-addpath(genpath('./QBlade Pitch Files Final')) 
-Reynolds_1 = readmatrix('/Element 10/Reynolds_10.txt'); %%$$$$$$$$$$$$$
+addpath(genpath('./QBlade Pitch Files NREL804')) 
+Reynolds_1 = readmatrix('/Element 1/Reynolds_2.txt'); %%$$$$$$$$$$$$$
 Average_Reynolds_Number = mean(Reynolds_1(1:359,2));
 
 plot(Reynolds_1(1:359,1),Reynolds_1(1:359,2))
 
 %% Load best airfoils
-
-fileID = fopen('Emelia Results/integration/results_final.txt', 'r');
-fgetl(fileID);
-C = textscan(fileID, '%s', 'Delimiter', '\n');
-dataCellArray = C{1};
-fclose(fileID);
-
-for i = 1:10
-    temp = dataCellArray{i};
-    if i<10
-        NACAnum(i) = str2double(temp(14:17));
-    else
-        NACAnum(i) = str2double(temp(15:18));
-    end
-end
-
-liftofElement = {};
-AOAofElement ={};
-Lift_curves = {};
-Drag_curves = {};
-AOA_curves = {};
+% 
+% fileID = fopen('Emelia Results/integration/results_final.txt', 'r');
+% fgetl(fileID);
+% C = textscan(fileID, '%s', 'Delimiter', '\n');
+% dataCellArray = C{1};
+% fclose(fileID);
+% 
+% for i = 1:10
+%     temp = dataCellArray{i};
+%     if i<10
+%         NACAnum(i) = str2double(temp(14:17));
+%     else
+%         NACAnum(i) = str2double(temp(15:18));
+%     end
+% end
+% 
+% liftofElement = {};
+% AOAofElement ={};
+% Lift_curves = {};
+% Drag_curves = {};
+% AOA_curves = {};
 
 for i = 1:1
-[Maxlift,bestAOA,Lift_curve,Drag_curve,AOA_curve] = RunFineXfoil('6710',Average_Reynolds_Number(1),0.082); %$$$$$$$$$$$$ X2
+[Maxlift,bestAOA,Lift_curve,Drag_curve,AOA_curve] = RunFineXfoil('S804.txt',Average_Reynolds_Number(1),0.0193); %$$$$$$$$$$$$ X2
 
 liftofElement{i} = Maxlift;
 AOAofElement{i} = bestAOA;
@@ -46,15 +46,15 @@ for jj = 1:1
 [alpha_ext, CL_ext, CD_ext] = viterna_extrapolation(AOA_curves{jj}, Lift_curves{jj}, Drag_curves{jj}); %perform vinerna expansion 
 
 % Define the known values (replace these placeholders with your actual data)
-lambda_r = 5.23; % Your lambda_r value $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-t1 = readmatrix('/Element 10/Tangential_Induction_10.txt'); %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+lambda_r = 1.2306; % Your lambda_r value $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+t1 = readmatrix('/Element 2/Tangential_Induction_2.txt'); %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 a_prime = t1(1:360,2); % Your a_prime value
-t2 = readmatrix('/Element 10/Axial_Induction_10.txt'); %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+t2 = readmatrix('/Element 2/Axial_Induction_2.txt'); %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 a  = t2(1:360,2);
 
 % Phi function interpolated over theta_values_deg in degrees
-angleattack = readmatrix('/Element 10/AOA_10.txt'); %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-phi_vector_deg = angleattack(1:360,2)+3.264; % $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+angleattack = readmatrix('/Element 2/AOA_2.txt'); %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+phi_vector_deg = angleattack(1:360,2)+23.82; % $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 theta_values_deg = 0:359; % A vector from 0 to 359 degrees
 phi_function_deg = @(theta_deg) interp1(theta_values_deg, phi_vector_deg, theta_deg, 'spline');
 
