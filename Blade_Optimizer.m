@@ -10,7 +10,7 @@ generate_plots = true;
 
 V_inf = 5; %m/s
 Blade_length = 0.15; %m
-skew_angle = 20; %deg
+skew_angle = 30; %deg
 blade_number = 3;
 TSR = (4*pi/blade_number)*1.25;  %https://users.wpi.edu/~cfurlong/me3320/DProject/Ragheb_OptTipSpeedRatio2014.pdf
 n = 10; %number of blade element segments
@@ -147,14 +147,14 @@ fid3 = fopen( 'Generational_Best.txt', 'wt' );
 fprintf(fid2, 'Element Number\t\tAirfoil\t\tintCLoverCD\t\tAOA\n');
 fprintf(fid3, 'Element Number\t\tAirfoil\t\tint(l/d)\t\tReynolds#\n');
 
-starting_population = 1200; % 50 percent of the total subset
-num_generations = 5;
-num_parents = 120;
-num_offspring = 120;
+starting_population = 100; % 50 percent of the total subset
+num_generations = 1;
+num_parents = 1;
+num_offspring = 1;
 
 course_xfoil = 40; % number of points
 points_course = linspace(-20,20,course_xfoil);
-for element_num = 1:1
+for element_num = 1:11
 
     Element_Reynolds = Average_Reynolds_Number(element_num);
     Element_Mach = Average_Mach(element_num);

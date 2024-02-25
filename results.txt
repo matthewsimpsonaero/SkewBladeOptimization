@@ -1,1 +1,2 @@
 Element Number		Airfoil		intCLoverCD		AOA
+1		NACA7610		78.418		1.702370e+04

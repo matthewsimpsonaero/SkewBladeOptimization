@@ -1,1 +1,2 @@
 Element Number		Airfoil		int(l/d)		Reynolds#
+1		NACA7610		69.587		1.702370e+04
