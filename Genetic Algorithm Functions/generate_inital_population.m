@@ -3,7 +3,7 @@ function Airfoils = generate_inital_population(Population_Size)
 Airfoils = {};
 counter = 1;
 for i = 0:9
-for j = 0:9
+for j = 5:9
     Camber = i;
     if i == 0
     Camber_Position = 0;

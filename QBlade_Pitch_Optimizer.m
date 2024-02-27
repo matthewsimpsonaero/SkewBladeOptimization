@@ -1,10 +1,17 @@
 clc;clear
+nn = 10; %%%%%
+af = '5510';%%%%%%
+mm = 0.0797;
+lambda_r = 5.23; 
+p_val = -0.194;
 
-addpath(genpath('./QBlade Constant Chord')) 
-Reynolds_1 = readmatrix('/Element 1/Reynolds_1.txt'); %%$$$$$$$$$$$$$
-Average_Reynolds_Number = mean(Reynolds_1(1:359,2));
 
-plot(Reynolds_1(1:359,1),Reynolds_1(1:359,2))
+addpath(genpath('./QBlade Constant Chord 20 Deg')) 
+i1 = sprintf('/Element %d/Reynolds_%d.txt',nn,nn);
+Reynolds_1 = readmatrix(i1); 
+Average_Reynolds_Number = mean(Reynolds_1(361:720,2));
+
+plot(Reynolds_1(361:720,1),Reynolds_1(361:720,2))
 
 %% Load best airfoils
 
@@ -30,7 +37,7 @@ Drag_curves = {};
 AOA_curves = {};
 
 for i = 1:1
-[Maxlift,bestAOA,Lift_curve,Drag_curve,AOA_curve] = RunFineXfoil('6710',Average_Reynolds_Number(1),0.0194); %$$$$$$$$$$$$ X2
+[Maxlift,bestAOA,Lift_curve,Drag_curve,AOA_curve] = RunFineXfoil(af,Average_Reynolds_Number(1),mm); %$$$$$$$$$$$$ X2
 
 liftofElement{i} = Maxlift;
 AOAofElement{i} = bestAOA;
@@ -46,15 +53,17 @@ for jj = 1:1
 [alpha_ext, CL_ext, CD_ext] = viterna_extrapolation(AOA_curves{jj}, Lift_curves{jj}, Drag_curves{jj}); %perform vinerna expansion 
 
 % Define the known values (replace these placeholders with your actual data)
-lambda_r = 1.2306; % Your lambda_r value $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-t1 = readmatrix('/Element 1/Tangential_Induction_1.txt'); %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-a_prime = t1(1:360,2); % Your a_prime value
-t2 = readmatrix('/Element 1/Axial_Induction_1.txt'); %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-a  = t2(1:360,2);
+i2 = sprintf('/Element %d/Tangential_Induction_%d.txt',nn,nn);
+t1 = readmatrix(i2);
+a_prime = t1(361:720,2); % Your a_prime value
+i3 = sprintf('/Element %d/Axial_Induction_%d.txt',nn,nn);
+t2 = readmatrix(i3); 
+a  = t2(361:720,2);
 
 % Phi function interpolated over theta_values_deg in degrees
-angleattack = readmatrix('/Element 1/AOA_1.txt'); %$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-phi_vector_deg = angleattack(1:360,2)+27.32; % $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+i4 = sprintf('/Element %d/AOA_%d.txt',nn,nn);
+angleattack = readmatrix(i4); 
+phi_vector_deg = angleattack(361:720,2)+p_val; 
 theta_values_deg = 0:359; % A vector from 0 to 359 degrees
 phi_function_deg = @(theta_deg) interp1(theta_values_deg, phi_vector_deg, theta_deg, 'spline');
 
@@ -64,7 +73,7 @@ Cd_data = CD_ext; % Your Cd data as a function of alpha, in degrees
 Cl_data = CL_ext; % Your Cl data as a function of alpha, in degrees
 
 % Define the range of theta_p values over which you want to plot
-theta_p_deg = linspace(0,70,200); % for example from 0 to 180 degrees
+theta_p_deg = linspace(-20,70,200); % for example from 0 to 180 degrees
 
 % Call the function to plot the objective function
 [theta_p_range_deg,objective_values] = plotObjectiveFunction(phi_vector_deg, lambda_r, a_prime, a, alpha_data_deg, Cd_data, Cl_data, theta_p_deg);

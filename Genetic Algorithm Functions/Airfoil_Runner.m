@@ -22,7 +22,7 @@ try
         xf.addQuit;
         xf.run
         %fprintf('Running NACA%s\n',NACA_Number)
-        finished = xf.wait(10);
+        finished = xf.wait(20);
     
         try
             fid = fopen(char(xf.PolarFiles));
