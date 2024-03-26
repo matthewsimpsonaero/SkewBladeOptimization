@@ -18,7 +18,7 @@ The novel twist function presented in the publication is used in comparison to t
 Experimental Results from wind tunnel experiments yielded the following positive increase in total peak power and rotational velocity, as seen in the following plots:
 
 <p align="center">
-    <img src="https://github.com/matthewsimpsonaero/SkewBladeOptimization/blob/main/Images/Experimental%20Results%202.png" alt="Alt Text" width="400" height="300"/>
+    <img src="https://github.com/matthewsimpsonaero/SkewBladeOptimization/blob/main/Images/Experimental%20Results%202.png" alt="Alt Text" width="600" height="300"/>
 </p>
 
 Further work experimenting with co-axial rotors is expected within the NCSU EMSSL.
