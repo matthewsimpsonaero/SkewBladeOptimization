@@ -72,6 +72,10 @@ ylim([0,max(sqrt(V_parallel(i,:).^2+V_perpindicular(i,:) .^2))]+2)
 xlim([0,360])
 leg = legend(Location="southoutside",Orientation='horizontal');
 leg.ItemTokenSize = [10,6];
+ax = gca;
+ax.XTick = 0:45:360;
+ax.XTickLabel = {0, 45, 90, 135, 180, 225, 270, 315, 360};
+xlim([0,360])
 
 fig = figure();
 fig.Position = [100 100 740 600];
@@ -86,6 +90,10 @@ ylabel('Velocity Direction (°)',FontSize=16)
 title('Velocity Direction vs. Rotation Angle for Skewed Turbine',FontSize=16)
 leg = legend(Location="southoutside",Orientation='horizontal');
 leg.ItemTokenSize = [10,6];
+xlim([0,360])
+ax = gca;
+ax.XTick = 0:45:360;
+ax.XTickLabel = {0, 45, 90, 135, 180, 225, 270, 315, 360};
 xlim([0,360])
 end
 

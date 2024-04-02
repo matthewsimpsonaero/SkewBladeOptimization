@@ -8,13 +8,12 @@ function GeneratePositionPlot(Position,n)
     grid on
     grid(gca,'minor')
     xlabel('Azimuth Angle θ (deg)',FontSize=16)
-    ylabel('Skew Position (m)',FontSize=16)
-    title('Skew Position vs. Rotation Angle for Skewed Turbine',FontSize=16)
+    ylabel('Axial Position (m)',FontSize=16)
+    title('Axial Position vs. Rotation Angle for Skewed Turbine',FontSize=16)
     leg = legend(Location="southoutside",Orientation='horizontal');
     leg.ItemTokenSize = [10,6];
     ax = gca;
-    ax.XTick = 0:45:360;
-    ax.XTickLabel = {0, 45, 90, 135, 180, 225, 270, 315, 360};
-    xlim([0,360])
+    ax.XTick = 0:60:1800;
+    ax.XTickLabel = {0, 180, 360, 180, 360, 180, 360, 180, 360};
 end
 
