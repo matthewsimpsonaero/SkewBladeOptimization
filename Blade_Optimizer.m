@@ -3,6 +3,9 @@
 % 1-27-2024
 clc;clear, close all
 
+% This code selects airfoils for the turbine optimization based on input
+% paramters
+
 addpath(genpath('./Initalization Functions'))
 addpath(genpath('./Genetic Algorithm Functions'))
 generate_plots = true; % Toggle this if you would like to show plots while the code is running
