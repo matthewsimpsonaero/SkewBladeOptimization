@@ -27,7 +27,7 @@ Wind tunnel experiments demonstrated a significant increase in total peak power 
     <img src="https://github.com/matthewsimpsonaero/SkewBladeOptimization/blob/main/Images/Experimental%20Results%202.png" alt="Experimental Results - Power and Rotational Velocity" width="600" height="300"/>
 </p>
 
-## Future Research
+## Detailed Walkthrough
 
-Further experimentation with co-axial rotors is anticipated at the NCSU EMSSL.
+A detailed explanation of each script and the process for running the optimization are available on the Wiki
 
