@@ -1,5 +1,5 @@
 function [alpha_sweep,CL_export, CD_export] = viterna_extrapolation(alpha, CL, CD)
-%https://www.researchgate.net/publication/317305962_Airfoil_Lift_and_Drag_Extrapolation_with_Viterna_and_Montgomerie_Methods
+% See for equations: https://www.researchgate.net/publication/317305962_Airfoil_Lift_and_Drag_Extrapolation_with_Viterna_and_Montgomerie_Methods
 alpha_ext = 1:90;
 AR = 3;
 [Cl_stall,idx] = max(CL);
