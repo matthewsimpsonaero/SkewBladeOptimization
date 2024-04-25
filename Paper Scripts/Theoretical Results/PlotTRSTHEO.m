@@ -6,13 +6,13 @@ dataQ10 = readmatrix("Q10.xlsx");
 dataQ0 = readmatrix("Q0.xlsx");
 
 
-plot(dataT20(:,1),dataT20(:,2),'o-',LineWidth=1.5)
+plot(dataT20(:,1),dataT20(:,2),'o-',LineWidth=1.5,Color=[0.4660 0.6740 0.1880],MarkerSize=9)
 hold on
-plot(dataT10(:,1),dataT10(:,2),"+-",LineWidth=1.5)
-plot(dataT0(:,1),dataT0(:,2),"*-",LineWidth=1.5)
-plot(dataQ20(:,1),dataQ20(:,2),"diamond-",LineWidth=1.5)
-plot(dataQ10(:,1),dataQ10(:,2),"x-",LineWidth=1.5)
-plot(dataQ0(:,1),dataQ0(:,2),"square-",LineWidth=1.5)
+plot(dataT10(:,1),dataT10(:,2),"+-",LineWidth=1.5,Color=[0.4660 0.6740 0.1880],MarkerSize=9)
+plot(dataT0(:,1),dataT0(:,2),"*-",LineWidth=1.5,Color=[0.4660 0.6740 0.1880],MarkerSize=9)
+plot(dataQ20(:,1),dataQ20(:,2),"diamond-b",LineWidth=1.5,Color=[0 0.4470 0.7410],MarkerSize=9)
+plot(dataQ10(:,1),dataQ10(:,2),"x-b",LineWidth=1.5,Color=[0 0.4470 0.7410],MarkerSize=9)
+plot(dataQ0(:,1),dataQ0(:,2),"square-b",LineWidth=1.5,Color=[0 0.4470 0.7410],MarkerSize=9)
 grid on
 grid minor
 title('Theoretical CP vs. TSR for Betz & QBlade Turbine',FontSize=14)

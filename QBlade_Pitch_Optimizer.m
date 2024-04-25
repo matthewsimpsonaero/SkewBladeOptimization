@@ -1,12 +1,12 @@
 clc;clear
-nn = 10; %%%%%
+nn = 5; %%%%%
 af = '5510';%%%%%%
 mm = 0.0797;
 lambda_r = 5.23; 
 p_val = -0.194;
 
 
-addpath(genpath('./QBlade Constant Chord 20 Deg')) 
+addpath(genpath('./Twist Optimization 20 Deg')) 
 i1 = sprintf('/Element %d/Reynolds_%d.txt',nn,nn);
 Reynolds_1 = readmatrix(i1); 
 Average_Reynolds_Number = mean(Reynolds_1(361:720,2));
@@ -15,20 +15,20 @@ plot(Reynolds_1(361:720,1),Reynolds_1(361:720,2))
 
 %% Load best airfoils
 
-fileID = fopen('Code Outputs/integration/results_final.txt', 'r');
-fgetl(fileID);
-C = textscan(fileID, '%s', 'Delimiter', '\n');
-dataCellArray = C{1};
-fclose(fileID);
-
-for i = 1:10
-    temp = dataCellArray{i};
-    if i<10
-        NACAnum(i) = str2double(temp(14:17));
-    else
-        NACAnum(i) = str2double(temp(15:18));
-    end
-end
+% fileID = fopen('Code Outputs/integration/results_final.txt', 'r');
+% fgetl(fileID);
+% C = textscan(fileID, '%s', 'Delimiter', '\n');
+% dataCellArray = C{1};
+% fclose(fileID);
+% 
+% for i = 1:10
+%     temp = dataCellArray{i};
+%     if i<10
+%         NACAnum(i) = str2double(temp(14:17));
+%     else
+%         NACAnum(i) = str2double(temp(15:18));
+%     end
+% end
 
 liftofElement = {};
 AOAofElement ={};
@@ -37,7 +37,7 @@ Drag_curves = {};
 AOA_curves = {};
 
 for i = 1:1
-[Maxlift,bestAOA,Lift_curve,Drag_curve,AOA_curve] = RunFineXfoil(af,Average_Reynolds_Number(1),mm); %$$$$$$$$$$$$ X2
+[Maxlift,bestAOA,Lift_curve,Drag_curve,AOA_curve] = RunFineXfoil('7810',Average_Reynolds_Number(1),mm); %$$$$$$$$$$$$ X2
 
 liftofElement{i} = Maxlift;
 AOAofElement{i} = bestAOA;
@@ -50,8 +50,29 @@ end
 %% Determine twist
 
 for jj = 1:1
-[alpha_ext, CL_ext, CD_ext] = viterna_extrapolation(AOA_curves{jj}, Lift_curves{jj}, Drag_curves{jj}); %perform vinerna expansion 
+[alpha_ext, CL_ext, CD_ext] = viterna_extrapolation(AOA_curves{1}, Lift_curves{1}, Drag_curves{1}); %perform vinerna expansion 
 
+fig = figure();
+fig.Position = [100 100 740 600];
+gg = plot(alpha_ext,CD_ext,'r',LineWidth=2,DisplayName='Viterna Extrapolation');
+hold on
+uu = plot(AOA_curves{1}, Drag_curves{1},'m',LineWidth=2,DisplayName='Xfoil Output');
+grid on 
+grid(gca,'minor')
+xlabel('Angle of Attack α (deg)',FontSize=16)
+ylabel('CD',FontSize=16)
+title('Viterna Expansion of Airfoil Curve \alpha \in [-180^\circ, 180^\circ]',FontSize=16)
+xlim([-180,180])
+ax = gca;
+ax.XTick = -180:45:180;
+ax.XTickLabel = {-180, -135, -90, -45, 0, 45, 90, 135, 180};
+xline(0,'k-')
+yline(0,'k-')
+legend([uu,gg],fontsize=12)
+ylim([0 1.4])
+
+
+%%
 % Define the known values (replace these placeholders with your actual data)
 i2 = sprintf('/Element %d/Tangential_Induction_%d.txt',nn,nn);
 t1 = readmatrix(i2);

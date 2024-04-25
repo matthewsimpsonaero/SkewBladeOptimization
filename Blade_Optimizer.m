@@ -49,9 +49,10 @@ end
 
 theta = 1:360;
 for i = 1:n+1
-    V_perpindicular(i,1:360) = V_inf*cosd(skew_angle)-omega*(Element_location(i)+hub_radius)*sind(skew_angle)*sind(theta)*cosd(skew_angle);
-    V_parallel(i,1:360) = V_inf*sind(skew_angle)*sind(theta) + omega*(Element_location(i)+hub_radius);
-    Velocity_Direction(i,1:360) = atan2d( V_perpindicular(i,1:360), V_parallel(i,1:360));
+    V_Y(i,1:360) = V_inf*cosd(skew_angle)-omega*(Element_location(i)+hub_radius)*sind(skew_angle)*sind(theta)*cosd(skew_angle);
+    V_X(i,1:360) = V_inf*sind(skew_angle)*sind(theta) + omega*(Element_location(i)+hub_radius);
+
+    Velocity_Direction(i,1:360) = atan2d( V_Y(i,1:360), V_X(i,1:360));
 end
 
 Average_Velocity_Direction = mean(Velocity_Direction');
@@ -60,7 +61,7 @@ if generate_plots
 fig = figure();
 fig.Position = [100 100 740 600];
 for i = 1:n+1
-plot(1:360,sqrt(V_parallel(i,:).^2+V_total_static(i,:) .^2),LineWidth=2,DisplayName=sprintf('E. %d',i-1))
+plot(1:360,sqrt(V_Y(i,:).^2+V_total_static(i,:) .^2),LineWidth=2,DisplayName=sprintf('E. %d',i-1))
 hold on
 end
 grid on 
@@ -68,7 +69,7 @@ grid(gca,'minor')
 xlabel('Turbine Azimuth Angle° (deg)',FontSize=16)
 ylabel('Seen Velocity (m/s)',FontSize=16)
 title('Seen Velocity vs. Rotation Angle for Skewed Turbine',FontSize=16)
-ylim([0,max(sqrt(V_parallel(i,:).^2+V_perpindicular(i,:) .^2))]+2)
+ylim([0,max(sqrt(V_Y(i,:).^2+V_X(i,:) .^2))]+2)
 xlim([0,360])
 leg = legend(Location="southoutside",Orientation='horizontal');
 leg.ItemTokenSize = [10,6];
@@ -86,7 +87,7 @@ end
 grid on 
 grid(gca,'minor')
 xlabel('Turbine Azimuth Angle° (deg)',FontSize=16)
-ylabel('Velocity Direction (°)',FontSize=16)
+ylabel('Velocity Direction Φ(°)',FontSize=16)
 title('Velocity Direction vs. Rotation Angle for Skewed Turbine',FontSize=16)
 leg = legend(Location="southoutside",Orientation='horizontal');
 leg.ItemTokenSize = [10,6];
