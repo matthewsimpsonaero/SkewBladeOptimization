@@ -1,24 +1,33 @@
 # Skew Turbine Optimization Code
-### This code was utilized to develop a methodology for turbine optimization in a skewed fluid flow
 
-### Publication: Clark, E., Simpson, M., Joncich, T., and Mazzoleni, A., *Experimental Validation of a Novel Wind Turbine Blade Power Optimization Methodology for Skewed Fluid Flow*, American Institute of Aeronautics and Astronautics, 2024. 
+This code is developed to advance turbine optimization in skewed fluid flow environments.
 
-To accomplish this, the seen velocity of each turbine element was characterized:
+**Publication:**
+Clark, E., Simpson, M., Joncich, T., and Mazzoleni, A., *Experimental Validation of a Novel Wind Turbine Blade Power Optimization Methodology for Skewed Fluid Flow*, American Institute of Aeronautics and Astronautics, 2024.
 
-<p align="center">
-    <img src="https://github.com/matthewsimpsonaero/SkewBladeOptimization/blob/main/Images/SeenVelocity.png" alt="Alt Text" width="400" height="300"/>
-</p>
+## Overview
 
-The novel twist function presented in the publication is used in comparison to the Betz optimal turbine: 
+The methodology involves characterizing the seen velocity of each turbine element:
 
 <p align="center">
-    <img src="https://github.com/matthewsimpsonaero/SkewBladeOptimization/blob/main/Images/30DegTwist.png" alt="Alt Text" width="400" height="300"/>
+    <img src="https://github.com/matthewsimpsonaero/SkewBladeOptimization/blob/main/Images/SeenVelocity.png" alt="Seen Velocity of Turbine Element" width="400" height="300"/>
 </p>
 
-Experimental Results from wind tunnel experiments yielded the following positive increase in total peak power and rotational velocity, as seen in the following plots:
+A novel twist function from the publication is compared to the Betz optimal turbine:
 
 <p align="center">
-    <img src="https://github.com/matthewsimpsonaero/SkewBladeOptimization/blob/main/Images/Experimental%20Results%202.png" alt="Alt Text" width="600" height="300"/>
+    <img src="https://github.com/matthewsimpsonaero/SkewBladeOptimization/blob/main/Images/30DegTwist.png" alt="30 Degree Twist Function Comparison" width="400" height="300"/>
 </p>
 
-Further work experimenting with co-axial rotors is expected within the NCSU EMSSL.
+## Experimental Results
+
+Wind tunnel experiments demonstrated a significant increase in total peak power and rotational velocity:
+
+<p align="center">
+    <img src="https://github.com/matthewsimpsonaero/SkewBladeOptimization/blob/main/Images/Experimental%20Results%202.png" alt="Experimental Results - Power and Rotational Velocity" width="600" height="300"/>
+</p>
+
+## Future Research
+
+Further experimentation with co-axial rotors is anticipated at the NCSU EMSSL.
+
