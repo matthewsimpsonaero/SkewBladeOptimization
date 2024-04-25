@@ -29,5 +29,5 @@ Wind tunnel experiments demonstrated a significant increase in total peak power 
 
 ## Detailed Walkthrough
 
-A detailed explanation of each script and the process for running the optimization are available on the Wiki
+A detailed explanation of each script and the process for running the optimization are available on the [WIKI.](https://github.com/matthewsimpsonaero/SkewBladeOptimization/wiki)
 
