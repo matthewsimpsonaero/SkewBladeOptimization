@@ -1,4 +1,4 @@
-Element Number		Airfoil		int(l/d)		Reynolds#
+Element Number		Airfoil		int(Cl/Cd)	Reynolds#
 6		NACA6710		86.377		2.122485e+04
 6		NACA6710		86.377		2.122485e+04
 6		NACA6710		86.377		2.122485e+04
